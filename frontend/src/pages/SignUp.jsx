@@ -49,6 +49,7 @@ const SignUp = () => {
       setError(null);
       navigate("/sign-in");
     } catch (error) {
+      toast.error("Registration failed");
       setLoading(false);
       setError(error.message);
     }
@@ -64,6 +65,7 @@ const SignUp = () => {
           className="border p-3 rounded-lg"
           id="username"
           onChange={handleChange}
+          required
         />
         <input
           type="email"
@@ -71,6 +73,7 @@ const SignUp = () => {
           className="border p-3 rounded-lg"
           id="email"
           onChange={handleChange}
+          required
         />
         <input
           type="password"
@@ -78,6 +81,7 @@ const SignUp = () => {
           className="border p-3 rounded-lg"
           id="password"
           onChange={handleChange}
+          required
         />
         <input
           type="password"
@@ -85,6 +89,7 @@ const SignUp = () => {
           className="border p-3 rounded-lg"
           id="confirmPassword"
           onChange={handleChange}
+          required
         />
         {passwordMatchError && (
           <p className="text-red-500">{passwordMatchError}</p>
@@ -99,9 +104,9 @@ const SignUp = () => {
       </form>
       <div className="flex gap-2 mt-5">
         <p>
-          Have an account?{" "}
+          Have an account?
           <Link to="/sign-in">
-            <span className="text-blue-700">Sign In</span>
+            <span className="text-blue-700 ml-1">Sign In</span>
           </Link>
         </p>
       </div>
