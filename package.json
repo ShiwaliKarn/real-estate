@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-     "dev": "nodemon backend/server.js",
+    "dev": "nodemon backend/server.js",
     "start": "nod backend/server.js"
   },
   "keywords": [],
