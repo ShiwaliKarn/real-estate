@@ -7,6 +7,7 @@ import {
   signInSuccess,
   signInFailure,
 } from "../redux/user/userSlice";
+import OAuth from "../components/OAuth";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -35,14 +36,14 @@ const SignIn = () => {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-
+      console.log(data);
       if (data.success === false) {
         toast.error("Log in failed");
         dispatch(signInFailure());
         return;
       }
       toast.success("Sign in successful!");
-      dispatch(signInSuccess());
+      dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
       toast.error("Log in failed");
@@ -77,6 +78,7 @@ const SignIn = () => {
         >
           {loading ? "Signing Ip" : "Sign Ip"}
         </button>
+        <OAuth />
       </form>
       <div className="flex gap-2 mt-5">
         <p>
