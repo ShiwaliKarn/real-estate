@@ -8,6 +8,7 @@ const SignUp = () => {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
+  const [passwordMatchError, setPasswordMatchError] = useState(null);
 
   const handleChange = (e) => {
     setFormData({
@@ -18,6 +19,13 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.password !== formData.confirmPassword) {
+      setPasswordMatchError("Passwords do not match");
+      return;
+    }
+
+    setPasswordMatchError(null);
 
     try {
       setLoading(true);
@@ -71,6 +79,17 @@ const SignUp = () => {
           id="password"
           onChange={handleChange}
         />
+        <input
+          type="password"
+          placeholder="Re-enter Password"
+          className="border p-3 rounded-lg"
+          id="confirmPassword"
+          onChange={handleChange}
+        />
+        {passwordMatchError && (
+          <p className="text-red-500">{passwordMatchError}</p>
+        )}
+
         <button
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
           disabled={loading}
