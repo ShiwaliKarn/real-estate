@@ -8,8 +8,8 @@ dotenv.config();
 
 export const signUp = async (req, res, next) => {
   const { username, email, password } = req.body;
-  const salt = bcryptjs.genSaltSync(Number(process.env.SALT));
-  const hashedPassword = bcryptjs.hashSync(password, salt);
+  const hashedPassword = bcryptjs.hashSync(password, Number(process.env.SALT));
+
   const newUser = new User({ username, email, password: hashedPassword });
   try {
     await newUser.save();
@@ -58,8 +58,10 @@ export const google = async (req, res, next) => {
         Math.random().toString(36).slice(-8) +
         Math.random().toString(36).slice(-8);
 
-      const salt = bcryptjs.genSaltSync(Number(process.env.SALT));
-      const hashedPassword = bcryptjs.hashSync(generatedPassword, salt);
+      const hashedPassword = bcryptjs.hashSync(
+        generatedPassword,
+        Number(process.env.SALT)
+      );
       const newUser = new User({
         username:
           req.body.name.split(" ").join("").toLowerCase() +
