@@ -19,7 +19,7 @@ import {
 import { useDispatch } from "react-redux";
 import { IoLogOutOutline } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
-import { IoIosCamera } from "react-icons/io";
+import { IoIosCamera, IoMdCreate } from "react-icons/io";
 import toast from "react-hot-toast";
 
 const Profile = () => {
@@ -29,6 +29,11 @@ const Profile = () => {
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
+  const [editable, setEditable] = useState({
+    username: false,
+    email: false,
+    password: false,
+  });
 
   const dispatch = useDispatch();
 
@@ -91,34 +96,46 @@ const Profile = () => {
       if (data.success === false) {
         toast.error("Error updating profile");
         dispatch(updateUserFailure(data.message));
+        console.log(error);
         return;
       }
+      setEditable({
+        username: false,
+        email: false,
+        password: false,
+      });
       toast.success("Profile Updated");
       dispatch(updateUserSuccess(data));
-      // setUpdateSuccess(true);
     } catch (error) {
+      console.log(error);
+
       dispatch(updateUserFailure(error.message));
       toast.error("Error updating profile");
     }
   };
 
   const handleDeleteUser = async () => {
-    try {
-      dispatch(deleteUserStart());
-      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
-        method: "DELETE",
-      });
-      const data = await res.json();
-      if (data.success === false) {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete your account permanently?"
+    );
+    if (confirmDelete) {
+      try {
+        dispatch(deleteUserStart());
+        const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+          method: "DELETE",
+        });
+        const data = await res.json();
+        if (data.success === false) {
+          toast.error("Error deleting account");
+          dispatch(deleteUserFailure(data.message));
+          return;
+        }
+        toast.success("Account deleted successfully!");
+        dispatch(deleteUserSuccess(data));
+      } catch (error) {
         toast.error("Error deleting account");
-        dispatch(deleteUserFailure(data.message));
-        return;
+        dispatch(deleteUserFailure(error.message));
       }
-      toast.success("Account deleted successfully!");
-      dispatch(deleteUserSuccess(data));
-    } catch (error) {
-      toast.error("Error updating profile");
-      dispatch(deleteUserFailure(error.message));
     }
   };
 
@@ -138,6 +155,10 @@ const Profile = () => {
       toast.error("Logout failed");
       dispatch(deleteUserFailure(data.message));
     }
+  };
+
+  const handleEditClick = (field) => {
+    setEditable((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
   return (
@@ -178,29 +199,53 @@ const Profile = () => {
           </div>
         </div>
 
-        <input
-          type="text"
-          placeholder="username"
-          defaultValue={currentUser.username}
-          id="username"
-          className="border p-3 rounded-lg"
-          onChange={handleChange}
-        />
-        <input
-          type="email"
-          placeholder="email"
-          id="email"
-          defaultValue={currentUser.email}
-          className="border p-3 rounded-lg"
-          onChange={handleChange}
-        />
-        <input
-          type="password"
-          placeholder="password"
-          onChange={handleChange}
-          id="password"
-          className="border p-3 rounded-lg"
-        />
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="username"
+            id="username"
+            className="border  p-3 rounded-lg w-full "
+            value={formData.username || currentUser.username}
+            onChange={handleChange}
+            disabled={!editable.username}
+          />
+          <IoMdCreate
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+            onClick={() => handleEditClick("username")}
+          />
+        </div>
+
+        <div className="relative">
+          <input
+            type="email"
+            placeholder="email"
+            id="email"
+            value={formData.email || currentUser.email}
+            className="p-3 rounded-lg w-full border  "
+            onChange={handleChange}
+            disabled={!editable.email}
+          />
+          <IoMdCreate
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+            onClick={() => handleEditClick("email")}
+          />
+        </div>
+
+        <div className="relative">
+          <input
+            type="password"
+            placeholder="password"
+            id="password"
+            value={formData.password || ""}
+            className="border  p-3 rounded-lg w-full  "
+            onChange={handleChange}
+            disabled={!editable.password}
+          />
+          <IoMdCreate
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
+            onClick={() => handleEditClick("password")}
+          />
+        </div>
 
         <button
           className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80"
