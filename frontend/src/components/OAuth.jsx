@@ -1,11 +1,13 @@
-import { GoogleAuthProvider, getAuth, signInWithPopup } from "@firebase/auth";
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
 import { app } from "../firebase";
 import { useDispatch } from "react-redux";
 import { signInSuccess } from "../redux/user/userSlice";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const OAuth = () => {
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const handleGoogleClick = async () => {
     try {
       const provider = new GoogleAuthProvider();
@@ -13,7 +15,7 @@ const OAuth = () => {
 
       const result = await signInWithPopup(auth, provider);
 
-      const res = await fetch("api/auth/google", {
+      const res = await fetch("/api/auth/google", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -24,18 +26,19 @@ const OAuth = () => {
           photo: result.user.photoURL,
         }),
       });
-
       const data = await res.json();
+      toast.success("Sign in successful!");
       dispatch(signInSuccess(data));
+      navigate("/");
     } catch (error) {
-      console.log("Error signing in with Google", error);
+      toast.error("Sign in failed");
+      console.log("Could not sign in with google", error);
     }
   };
-
   return (
     <button
-      type="button"
       onClick={handleGoogleClick}
+      type="button"
       className="bg-red-700 text-white p-3 rounded-lg uppercase hover:opacity-95"
     >
       Continue with google
