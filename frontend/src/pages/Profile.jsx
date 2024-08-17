@@ -11,20 +11,24 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
+  deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  signOutUserStart,
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 import { IoLogOutOutline } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 import { IoIosCamera } from "react-icons/io";
+import toast from "react-hot-toast";
 
 const Profile = () => {
   const fileRef = useRef(null);
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
-  // const [updateSuccess, setUpdateSuccess] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -33,6 +37,15 @@ const Profile = () => {
       handleFileUpload(file);
     }
   }, [file]);
+
+  useEffect(() => {
+    if (fileUploadError || filePerc === 100) {
+      setTimeout(() => {
+        setFileUploadError(false);
+        setFilePerc(0);
+      }, 4000);
+    }
+  }, [filePerc, fileUploadError]);
 
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
@@ -48,6 +61,7 @@ const Profile = () => {
         setFilePerc(Math.round(progress));
       },
       (error) => {
+        console.log(error);
         setFileUploadError(true);
       },
       () => {
@@ -75,14 +89,54 @@ const Profile = () => {
       });
       const data = await res.json();
       if (data.success === false) {
+        toast.error("Error updating profile");
         dispatch(updateUserFailure(data.message));
         return;
       }
-
+      toast.success("Profile Updated");
       dispatch(updateUserSuccess(data));
       // setUpdateSuccess(true);
     } catch (error) {
       dispatch(updateUserFailure(error.message));
+      toast.error("Error updating profile");
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        toast.error("Error deleting account");
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      toast.success("Account deleted successfully!");
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      toast.error("Error updating profile");
+      dispatch(deleteUserFailure(error.message));
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutUserStart());
+      const res = await fetch("/api/auth/signout");
+      const data = await res.json();
+      if (data.success === false) {
+        toast.error("Logout failed");
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      toast.success("Logged Out");
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      toast.error("Logout failed");
+      dispatch(deleteUserFailure(data.message));
     }
   };
 
@@ -148,44 +202,25 @@ const Profile = () => {
           className="border p-3 rounded-lg"
         />
 
-        {/* <p
-          onClick={() => setChangePassword(true)}
-          className="text-sm text-slate-700 font-semibold cursor-pointer ml-1"
+        <button
+          className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80"
+          disabled={loading}
         >
-          Change Password?
-        </p>
-
-        {changePassword && (
-          <>
-            <input
-              type="password"
-              placeholder="New Password"
-              className="border p-3 rounded-lg"
-              id="password"
-              onChange={handleChange}
-            />
-            <input
-              type="password"
-              placeholder="Re-enter Password"
-              className="border p-3 rounded-lg"
-              id="reEnterPassword"
-              onChange={handleChange}
-            />
-            {passwordError && (
-              <span className="text-red-600 text-sm">{passwordError}</span>
-            )}
-          </>
-        )} */}
-        <button className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80">
-          Update
+          {loading ? "Updating..." : "Update"}
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-600 cursor-pointer font-semibold flex items-center flex-nowrap gap-1">
+        <span
+          className="text-red-600 cursor-pointer font-semibold flex items-center flex-nowrap gap-1"
+          onClick={handleDeleteUser}
+        >
           Delete account
           <MdDelete className=" text-xl mt-[.5px]" />
         </span>
-        <span className="text-blue-500 cursor-pointer font-semibold flex items-center flex-nowrap gap-1">
+        <span
+          className="text-blue-500 cursor-pointer font-semibold flex items-center flex-nowrap gap-1"
+          onClick={handleSignOut}
+        >
           Sign Out
           <IoLogOutOutline className=" text-xl mt-[2px] " />
         </span>
