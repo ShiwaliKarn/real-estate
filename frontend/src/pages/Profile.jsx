@@ -29,6 +29,7 @@ const Profile = () => {
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
+  const [showPasswordFields, setShowPasswordFields] = useState(false);
   const [editable, setEditable] = useState({
     username: false,
     email: false,
@@ -83,6 +84,11 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (formData.password !== formData.reEnterpassword) {
+      return;
+    }
+
     try {
       dispatch(updateUserStart());
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
@@ -99,6 +105,7 @@ const Profile = () => {
         console.log(error);
         return;
       }
+      setShowPasswordFields(false);
       setEditable({
         username: false,
         email: false,
@@ -159,6 +166,10 @@ const Profile = () => {
 
   const handleEditClick = (field) => {
     setEditable((prev) => ({ ...prev, [field]: !prev[field] }));
+  };
+
+  const handleChangePasswordClick = () => {
+    setShowPasswordFields(true);
   };
 
   return (
@@ -231,22 +242,38 @@ const Profile = () => {
           />
         </div>
 
-        <div className="relative">
-          <input
-            type="password"
-            placeholder="password"
-            id="password"
-            value={formData.password || ""}
-            className="border  p-3 rounded-lg w-full  "
-            onChange={handleChange}
-            disabled={!editable.password}
-          />
-          <IoMdCreate
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-500"
-            onClick={() => handleEditClick("password")}
-          />
-        </div>
+        <p
+          className="text-sm text-blue-500 font-semibold cursor-pointer ml-1"
+          onClick={handleChangePasswordClick}
+        >
+          Change Password?
+        </p>
 
+        {showPasswordFields && (
+          <>
+            <input
+              type="password"
+              placeholder="New password"
+              id="password"
+              className="border p-3 rounded-lg w-full"
+              onChange={handleChange}
+            />
+
+            <input
+              type="password"
+              placeholder="Re-enter password"
+              id="reEnterpassword"
+              className="border p-3 rounded-lg w-full"
+              onChange={handleChange}
+            />
+
+            {formData.password &&
+              formData.reEnterpassword &&
+              formData.password !== formData.reEnterpassword && (
+                <p className="text-red-600 text-sm">Passwords do not match</p>
+              )}
+          </>
+        )}
         <button
           className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80"
           disabled={loading}
