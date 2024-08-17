@@ -37,7 +37,7 @@ const Header = () => {
               <img
                 className="rounded-full h-7 w-7 object-cover"
                 src={currentUser.avatar}
-                alt="profile"
+                alt="Profile Image"
               />
             ) : (
               <li className=" text-slate-700 hover:underline"> Sign in</li>
