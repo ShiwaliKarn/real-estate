@@ -42,7 +42,7 @@ const SignIn = () => {
         dispatch(signInFailure());
         return;
       }
-      toast.success("Sign in successful!");
+      toast.success("Signed in successful!");
       dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {

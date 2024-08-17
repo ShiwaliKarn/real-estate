@@ -82,6 +82,14 @@ const Profile = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  const handleEditClick = (field) => {
+    setEditable((prev) => ({ ...prev, [field]: !prev[field] }));
+  };
+
+  const handleChangePasswordClick = () => {
+    setShowPasswordFields(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -123,7 +131,7 @@ const Profile = () => {
 
   const handleDeleteUser = async () => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete your account permanently?"
+      "Are you sure you want to delete your account?"
     );
     if (confirmDelete) {
       try {
@@ -162,14 +170,6 @@ const Profile = () => {
       toast.error("Logout failed");
       dispatch(deleteUserFailure(data.message));
     }
-  };
-
-  const handleEditClick = (field) => {
-    setEditable((prev) => ({ ...prev, [field]: !prev[field] }));
-  };
-
-  const handleChangePasswordClick = () => {
-    setShowPasswordFields(true);
   };
 
   return (
@@ -215,7 +215,7 @@ const Profile = () => {
             type="text"
             placeholder="username"
             id="username"
-            className="border  p-3 rounded-lg w-full "
+            className="border-2  p-3 rounded-lg w-full disabled:bg-slate-100 "
             value={formData.username || currentUser.username}
             onChange={handleChange}
             disabled={!editable.username}
@@ -232,7 +232,7 @@ const Profile = () => {
             placeholder="email"
             id="email"
             value={formData.email || currentUser.email}
-            className="p-3 rounded-lg w-full border  "
+            className="p-3 rounded-lg w-full border-2  disabled:bg-slate-100 "
             onChange={handleChange}
             disabled={!editable.email}
           />
@@ -255,7 +255,7 @@ const Profile = () => {
               type="password"
               placeholder="New password"
               id="password"
-              className="border p-3 rounded-lg w-full"
+              className="border-2  p-3 rounded-lg w-full"
               onChange={handleChange}
             />
 
@@ -263,10 +263,14 @@ const Profile = () => {
               type="password"
               placeholder="Re-enter password"
               id="reEnterpassword"
-              className="border p-3 rounded-lg w-full"
+              className="border-2  p-3 rounded-lg w-full"
               onChange={handleChange}
             />
-
+            {formData.password && formData.password.length < 8 && (
+              <p className="text-red-600 text-sm">
+                Password must be at least 8 characters
+              </p>
+            )}
             {formData.password &&
               formData.reEnterpassword &&
               formData.password !== formData.reEnterpassword && (
