@@ -21,6 +21,7 @@ import { IoLogOutOutline } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 import { IoIosCamera, IoMdCreate } from "react-icons/io";
 import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const fileRef = useRef(null);
@@ -174,7 +175,9 @@ const Profile = () => {
 
   return (
     <div className="p-3 max-w-lg mx-auto">
-      <h1 className="text-3xl font-semibold text-center">Profile</h1>
+      <h1 className="text-3xl font-semibold text-center uppercase my-2">
+        Profile
+      </h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <input
           onChange={(e) => setFile(e.target.files[0])}
@@ -257,6 +260,7 @@ const Profile = () => {
               id="password"
               className="border-2  p-3 rounded-lg w-full"
               onChange={handleChange}
+              minLength={8}
             />
 
             <input
@@ -266,11 +270,6 @@ const Profile = () => {
               className="border-2  p-3 rounded-lg w-full"
               onChange={handleChange}
             />
-            {formData.password && formData.password.length < 8 && (
-              <p className="text-red-600 text-sm">
-                Password must be at least 8 characters
-              </p>
-            )}
             {formData.password &&
               formData.reEnterpassword &&
               formData.password !== formData.reEnterpassword && (
@@ -284,6 +283,12 @@ const Profile = () => {
         >
           {loading ? "Updating..." : "Update"}
         </button>
+        <Link
+          className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-05"
+          to="/create-listing"
+        >
+          Create listing
+        </Link>
       </form>
       <div className="flex justify-between mt-5">
         <span
