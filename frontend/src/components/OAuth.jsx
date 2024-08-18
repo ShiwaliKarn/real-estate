@@ -27,11 +27,11 @@ const OAuth = () => {
         }),
       });
       const data = await res.json();
-      toast.success("Sign in successful!");
+      toast.success("Signed in successfully!");
       dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
-      toast.error("Sign in failed");
+      toast.error("Log in failed");
       console.log("Could not sign in with google", error);
     }
   };

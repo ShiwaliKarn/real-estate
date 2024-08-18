@@ -42,7 +42,7 @@ const SignIn = () => {
         dispatch(signInFailure());
         return;
       }
-      toast.success("Signed in successful!");
+      toast.success("Signed in successfully!");
       dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
@@ -76,7 +76,7 @@ const SignIn = () => {
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
           disabled={loading}
         >
-          {loading ? "Signing Ip" : "Sign Ip"}
+          {loading ? "Signing In" : "Sign In"}
         </button>
         <OAuth />
       </form>

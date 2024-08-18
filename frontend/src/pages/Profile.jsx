@@ -100,7 +100,7 @@ const Profile = () => {
     try {
       dispatch(updateUserStart());
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: "POST",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -110,7 +110,7 @@ const Profile = () => {
       if (data.success === false) {
         toast.error("Error updating profile");
         dispatch(updateUserFailure(data.message));
-        console.log(error);
+        console.log(data.message);
         return;
       }
       setShowPasswordFields(false);
