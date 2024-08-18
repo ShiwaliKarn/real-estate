@@ -180,6 +180,7 @@ const Profile = () => {
       setShowListingsError(false);
       const res = await fetch(`/api/user/listings/${currentUser._id}`);
       const data = await res.json();
+
       if (data.success === false) {
         setShowListingsError(true);
         return;
@@ -191,6 +192,27 @@ const Profile = () => {
     }
   };
 
+  const handleListingDelete = async (listingId) => {
+    try {
+      const res = await fetch(`/api/listing/delete/${listingId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      toast.success("Listing deleted");
+      if (data.success === false) {
+        toast.error("Error deleting listing");
+        console.log(data.message);
+        return;
+      }
+
+      setUserListings((prev) =>
+        prev.filter((listing) => listing._id !== listingId)
+      );
+    } catch (error) {
+      toast.error("Error deleting listing");
+      console.log(error.message);
+    }
+  };
   return (
     <div className="p-3 max-w-lg mx-auto ">
       <h1 className="text-3xl font-semibold text-center uppercase my-2">
@@ -360,9 +382,17 @@ const Profile = () => {
               >
                 <p>{listing.name}</p>
               </Link>
+
               <div className="flex flex-col item-center">
-                <button className="text-red-600 uppercase">Delete</button>
-                <button className="text-green-600 uppercase">Edit</button>
+                <button
+                  onClick={() => handleListingDelete(listing._id)}
+                  className="text-red-700 uppercase"
+                >
+                  Delete
+                </button>
+                <Link to={`/update-listing/${listing._id}`}>
+                  <button className="text-green-700 uppercase">Edit</button>
+                </Link>
               </div>
             </div>
           ))}
