@@ -360,7 +360,7 @@ const CreateListing = () => {
               ))}
             <button
               disabled={loading || uploading}
-              className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+              className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 disabled:cursor-wait"
             >
               {loading ? "Creating..." : "Create listing"}
             </button>

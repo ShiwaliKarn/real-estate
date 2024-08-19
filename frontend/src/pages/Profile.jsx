@@ -278,7 +278,7 @@ const Profile = () => {
           </>
         )}
         <button
-          className=" bg-blue-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80"
+          className=" bg-blue-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80 disabled:cursor-wait"
           disabled={loading}
         >
           {loading ? "Updating..." : "Update"}

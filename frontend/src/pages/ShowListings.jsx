@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import toast from "react-hot-toast";
-
+import { IoIosArrowBack } from "react-icons/io";
 const ShowListings = () => {
   const { currentUserId } = useParams();
   const [listings, setListings] = useState([]);
@@ -54,45 +54,57 @@ const ShowListings = () => {
   };
 
   return (
-    <div className="p-3 max-w-lg mx-auto">
-      <h1 className="text-3xl font-semibold text-center uppercase my-2">
-        Your Listings
-      </h1>
-      {listings.length === 0 ? (
-        <p>No listings found.</p>
-      ) : (
-        listings.map((listing) => (
-          <div
-            key={listing._id}
-            className="border rounded-lg p-3 flex justify-between items-center gap-4 mb-4"
-          >
-            <Link to={`/listing/${listing._id}`}>
-              <img
-                src={listing.imageUrls[0]}
-                alt="Listing cover"
-                className="h-16 w-16 object-contain"
-              />
-            </Link>
-            <Link
-              className="text-slate-700 font-semibold hover:underline truncate flex-1"
-              to={`/listing/${listing._id}`}
+    <div>
+      {" "}
+      <Link
+        to="/profile"
+        className="flex flex-nowrap curso font-semibold text-blue-600 items-center p-5 pt-20"
+      >
+        <IoIosArrowBack />
+        Go back to the previous page
+      </Link>
+      <div className="p-3 max-w-lg mx-auto">
+        <h1 className="text-3xl font-semibold text-center uppercase my-2">
+          Your Listings
+        </h1>
+        {listings.length === 0 ? (
+          <p>No listings found.</p>
+        ) : (
+          listings.map((listing) => (
+            <div
+              key={listing._id}
+              className="border rounded-lg p-3 flex justify-between items-center gap-4 mb-4"
             >
-              <p>{listing.name}</p>
-            </Link>
-            <div className="flex flex-col items-center">
-              <Link to={`/update-listing/${listing._id}`}>
-                <button className="text-green-700 uppercase mb-1">Edit</button>
+              <Link to={`/listing/${listing._id}`}>
+                <img
+                  src={listing.imageUrls[0]}
+                  alt="Listing cover"
+                  className="h-16 w-16 object-contain"
+                />
               </Link>
-              <button
-                onClick={() => handleDeleteListing(listing._id)}
-                className="text-red-700 uppercase"
+              <Link
+                className="text-slate-700 font-semibold hover:underline truncate flex-1"
+                to={`/listing/${listing._id}`}
               >
-                Delete
-              </button>
+                <p>{listing.name}</p>
+              </Link>
+              <div className="flex flex-col items-center">
+                <Link to={`/update-listing/${listing._id}`}>
+                  <button className="text-green-600 uppercase mb-1 font-semibold">
+                    Edit
+                  </button>
+                </Link>
+                <button
+                  onClick={() => handleDeleteListing(listing._id)}
+                  className="text-red-600 uppercase font-semibold"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
-        ))
-      )}
+          ))
+        )}
+      </div>
     </div>
   );
 };
