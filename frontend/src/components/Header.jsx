@@ -37,6 +37,10 @@ const Header = () => {
     }
   }, [location.search]);
 
+  useEffect(() => {
+    setShowMenu(false);
+  }, [currentUser]);
+
   const handleSignOut = async () => {
     try {
       dispatch(signOutUserStart());
