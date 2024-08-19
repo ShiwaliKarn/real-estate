@@ -1,12 +1,25 @@
 import { FaSearch } from "react-icons/fa";
+import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-
+import { IoPersonOutline } from "react-icons/io5";
+import { IoLogOutOutline } from "react-icons/io5";
+import {
+  deleteUserFailure,
+  deleteUserSuccess,
+  signOutUserStart,
+} from "../redux/user/userSlice";
 const Header = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [showMenu, setShowMenu] = useState(false);
+
+  const toggleMenu = () => {
+    setShowMenu((prev) => !prev);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -23,6 +36,25 @@ const Header = () => {
       setSearchTerm(searchTermFromUrl);
     }
   }, [location.search]);
+
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutUserStart());
+      const res = await fetch("/api/auth/signOut");
+      const data = await res.json();
+      if (data.success === false) {
+        toast.error("Logout failed");
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+
+      toast.success("Logged Out");
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      toast.error("Logout failed");
+      dispatch(deleteUserFailure(data.message));
+    }
+  };
 
   return (
     <header className="bg-slate-200 shadow-md fixed left-0 right-0 z-10">
@@ -59,18 +91,44 @@ const Header = () => {
               About
             </li>
           </Link>
-          <Link to="/profile">
-            {currentUser ? (
+
+          {currentUser ? (
+            <div
+              className="relative border-b-transparent border-b-[10px]"
+              onMouseEnter={() => setShowMenu(true)}
+              onMouseLeave={() => setShowMenu(false)}
+            >
               <img
-                className="rounded-full h-7 w-7 object-cover"
+                className="rounded-full h-7 w-7 object-cover cursor-pointer"
                 src={currentUser.avatar}
-                alt="Profile Image"
-                title="Profile"
+                alt="profile"
+                onClick={toggleMenu}
               />
-            ) : (
-              <li className=" text-slate-700 hover:underline"> Sign in</li>
-            )}
-          </Link>
+              {showMenu && (
+                <div className="absolute right-0 mt-2 w-36 bg-white rounded-md shadow-lg py-2 z-20">
+                  <Link
+                    to="/profile"
+                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items- justify-between"
+                    onClick={() => setShowMenu(false)}
+                  >
+                    Profile
+                    <IoPersonOutline className="text-green-600" />
+                  </Link>
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items- justify-between"
+                  >
+                    Sign out
+                    <IoLogOutOutline className="text-blue-600" />
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link to="/sign-in">
+              <li className=" text-slate-700 hover:underline">Sign in</li>
+            </Link>
+          )}
         </ul>
       </div>
     </header>
