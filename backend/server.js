@@ -23,14 +23,10 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
-});
-
-app.get("/", (req, res) => {
-  res.send("Server is running");
 });
 
 app.use("/api/user", userRouter);
