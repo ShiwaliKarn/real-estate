@@ -72,6 +72,7 @@ const Home = () => {
         navigation
         modules={[Autoplay]}
         autoplay={{ delay: 1500, disableOnInteraction: false }}
+        className="-mt-[50px]"
       >
         {offerListings &&
           offerListings.length > 0 &&
