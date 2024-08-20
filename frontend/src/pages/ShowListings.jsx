@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { IoIosArrowBack } from "react-icons/io";
+import { MdDelete } from "react-icons/md";
+import { IoMdCreate } from "react-icons/io";
+
 const ShowListings = () => {
   const { currentUserId } = useParams();
   const [listings, setListings] = useState([]);
@@ -90,16 +93,13 @@ const ShowListings = () => {
               </Link>
               <div className="flex flex-col items-center">
                 <Link to={`/update-listing/${listing._id}`}>
-                  <button className="text-green-600 uppercase mb-1 font-semibold">
-                    Edit
-                  </button>
+                  <IoMdCreate className="text-green-600 mb-3 " title="Edit" />
                 </Link>
-                <button
+                <MdDelete
                   onClick={() => handleDeleteListing(listing._id)}
-                  className="text-red-600 uppercase font-semibold"
-                >
-                  Delete
-                </button>
+                  className="text-red-600 cursor-pointer "
+                  title="Delete"
+                />
               </div>
             </div>
           ))
